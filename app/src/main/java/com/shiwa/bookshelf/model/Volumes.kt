@@ -3,9 +3,8 @@ package com.shiwa.bookshelf.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Book(
+data class Volumes (
     val kind: String,
-    val id: String,
-    val selfLink: String,
-    val volumeInfo: VolumeInfo,
+    val totalItems: Long,
+    val items: List<Book>
 )

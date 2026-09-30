@@ -12,12 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.shiwa.bookshelf.ui.theme.BookshelfTheme
-import dagger.hilt.android.AndroidEntryPoint
-
-// Obtém um conjunto de livros
-//https://www.googleapis.com/books/v1/volumes?q=jazz+history&key=API_KEY
-// Obtém um livro especifico desse conjunto
-//https://www.googleapis.com/books/v1/volumes/gK98gXR8onwC?key=API_KEY
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
