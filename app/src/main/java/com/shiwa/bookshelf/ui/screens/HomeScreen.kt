@@ -16,13 +16,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.shiwa.bookshelf.model.Book
-
 
 
 @Composable
@@ -88,15 +84,22 @@ fun BookSearchBar(
             contentAlignment = Alignment.CenterStart
 
         ){
-            if (placeholder.isNotEmpty()){
-                Text(text = placeholder, color = Color.Gray)
-            }
             BasicTextField(
                 value = query,
                 onValueChange = { query = it },
                 textStyle = TextStyle(color = Color.White, fontSize = 16.sp),
                 cursorBrush = SolidColor(Color.White),
                 singleLine = true,
+                decorationBox = { innerTextField ->
+                    if (query.isEmpty()) {
+                        Text(
+                            text = placeholder,
+                            color = Color.Gray,
+                            fontSize = 16.sp
+                        )
+                    }
+                    innerTextField()
+                },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(onSearch = {onSearch(query)}),
                 modifier = Modifier
@@ -134,7 +137,7 @@ fun BookCard(book: Book, modifier: Modifier = Modifier) {
         Text(text = "${book.volumeInfo.imageLinks?.thumbnail}")
         Spacer(modifier = Modifier.height(8.dp))
         AsyncImage(
-            model = book.volumeInfo.imageLinks?.thumbnail,
+            model = book.volumeInfo.imageLinks?.httpsThumbnail,
             contentDescription = null,
             placeholder = null,
             error = null
