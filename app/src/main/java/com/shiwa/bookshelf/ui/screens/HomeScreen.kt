@@ -16,10 +16,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,9 +32,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.shiwa.bookshelf.model.Book
 
 
@@ -85,12 +92,15 @@ fun BookSearchBar(
                 Text(text = placeholder, color = Color.Gray)
             }
             BasicTextField(
-                value = "",
-                onValueChange = {query = it},
+                value = query,
+                onValueChange = { query = it },
+                textStyle = TextStyle(color = Color.White, fontSize = 16.sp),
+                cursorBrush = SolidColor(Color.White),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(onSearch = {onSearch(query)}),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
             )
         }
 
@@ -121,14 +131,14 @@ fun BooksGridScreen(books: List<Book>, modifier: Modifier) {
 @Composable
 fun BookCard(book: Book, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxSize()) {
-        Text(text = "Book card")
+        Text(text = "${book.volumeInfo.imageLinks?.thumbnail}")
         Spacer(modifier = Modifier.height(8.dp))
-//        AsyncImage(
-//            model = book.volumeInfo.imageLinks?.thumbnail,
-//            contentDescription = null,
-//            placeholder = null,
-//            error = null
-//        )
+        AsyncImage(
+            model = book.volumeInfo.imageLinks?.thumbnail,
+            contentDescription = null,
+            placeholder = null,
+            error = null
+        )
         val bookTitle = book.volumeInfo.title ?: ""
         Text(text = bookTitle)
     }

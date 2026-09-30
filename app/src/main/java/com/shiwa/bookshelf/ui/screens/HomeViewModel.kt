@@ -16,9 +16,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 sealed interface HomeUiState{
+
     data class Success(val books: List<Book>) : HomeUiState
     object Error : HomeUiState
     object Loading : HomeUiState
+
 }
 
 class HomeViewModel(private val bookRepository: BookRepository) : ViewModel() {
@@ -29,12 +31,12 @@ class HomeViewModel(private val bookRepository: BookRepository) : ViewModel() {
         getBooks()
     }
 
-    fun getBooks(){
+    fun getBooks(query: String = "jazz+history"){
         viewModelScope.launch {
             _uiState.update { HomeUiState.Loading }
 
             try {
-                val books = bookRepository.getBooks(query = "jazz+history")
+                val books = bookRepository.getBooks(query = query)
                 Log.d("VIEWMODEL", books.firstOrNull()?.volumeInfo?.imageLinks?.thumbnail ?: "No thumbnail")
                 _uiState.update { HomeUiState.Success(books = books) }
             } catch (e: Exception) {
