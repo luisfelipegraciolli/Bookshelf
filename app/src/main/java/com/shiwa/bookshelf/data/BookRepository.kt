@@ -2,7 +2,6 @@ package com.shiwa.bookshelf.data
 
 import com.shiwa.bookshelf.BuildConfig
 import com.shiwa.bookshelf.model.Book
-import com.shiwa.bookshelf.model.Volumes
 import com.shiwa.bookshelf.network.ApiService
 
 
@@ -19,12 +18,11 @@ interface BookRepository {
 
 class BookRepositoryImpl(private val apiService: ApiService) : BookRepository {
     override suspend fun getBooks(query: String): List<Book> {
-    // val validQuery = query.replace(" ", "+")
-        val validQuery = "jazz+history"
+        val validQuery = query.ifEmpty { "jazz+history" }.replace(" ", "+")
         return apiService.getBooks(
             validQuery = validQuery,
             apiKey = BuildConfig.API_KEY
-        ).items
+        ).books ?: emptyList()
     }
 
 

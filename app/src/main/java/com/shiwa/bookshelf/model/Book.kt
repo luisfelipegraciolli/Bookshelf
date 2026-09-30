@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Book(
-    val kind: String,
-    val id: String,
-    val selfLink: String,
-    val volumeInfo: VolumeInfo,
+    val kind: String? = null,
+    val id: String = "",
+    val selfLink: String? = null,
+    val volumeInfo: VolumeInfo = VolumeInfo()
 )

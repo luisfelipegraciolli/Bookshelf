@@ -4,7 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class VolumeInfo(
-    val title: String,
-    val description: String,
-    val imageLinks: ImageLink,
+    val title: String? = "",
+    val imageLinks: ImageLinks? = null
 )
