@@ -53,10 +53,6 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.shiwa.bookshelf.model.Book
-import com.shiwa.bookshelf.model.ImageLinks
-import com.shiwa.bookshelf.model.VolumeInfo
-
-
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
