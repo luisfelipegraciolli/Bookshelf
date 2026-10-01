@@ -20,7 +20,7 @@ A minimalist Android application built with Jetpack Compose to search and discov
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/Bookshelf.git
+   git clone https://github.com/luisfelipegraciolli/Bookshelf.git
    ```
 2. Open the project in **Android Studio**.
 3. Add your Google Books API key in `local.properties`:
