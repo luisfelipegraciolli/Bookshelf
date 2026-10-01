@@ -10,7 +10,9 @@ interface ApiService {
     @GET("volumes")
     suspend fun getBooks(
         @Query("q") validQuery: String,
-        @Query("key") apiKey: String
+        @Query("key") apiKey: String,
+        @Query("maxResults") maxResults: Int,
+        @Query("startIndex") startIndex: Int
     ): Volumes
 
     @GET("volumes/{id}")

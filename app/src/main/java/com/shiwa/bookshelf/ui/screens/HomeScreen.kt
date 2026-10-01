@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,11 +56,16 @@ import com.shiwa.bookshelf.model.VolumeInfo
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    onLoadMore: () -> Unit,
     uiState: HomeUiState
 ) {
     when (uiState) {
         is HomeUiState.Loading -> LoadingScreen(modifier = modifier)
-        is HomeUiState.Success -> BooksGridScreen(books = uiState.books, modifier = modifier)
+        is HomeUiState.Success -> BooksGridScreen(
+            books = uiState.books,
+            modifier = modifier,
+            onLoadMore = onLoadMore
+        )
         is HomeUiState.Error -> ErrorScreen(modifier = modifier)
     }
 }
@@ -139,13 +145,18 @@ fun BookSearchBar(
 
 
 @Composable
-fun BooksGridScreen(books: List<Book>, modifier: Modifier) {
+fun BooksGridScreen(books: List<Book>, onLoadMore: () -> Unit, modifier: Modifier) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(150.dp),
         contentPadding = PaddingValues(4.dp)
     ) {
-        items(books.size) { book ->
-            BookCard(book = books[book], modifier = modifier.padding(6.dp).fillMaxWidth())
+        items(books.size) { index ->
+            if(index >= books.size - 2){
+                LaunchedEffect(index){
+                    onLoadMore()
+                }
+            }
+            BookCard(book = books[index], modifier = modifier.padding(6.dp).fillMaxWidth())
         }
     }
 }
@@ -215,6 +226,7 @@ fun GridPreview(){
             ),
 
             ),
+        onLoadMore = {},
         modifier = Modifier.fillMaxSize()
     )
 }

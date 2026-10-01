@@ -37,6 +37,7 @@ fun BookshelfApp(){
                 )
                 HomeScreen(
                     uiState = viewModel.uiState.collectAsState().value,
+                    onLoadMore = { viewModel.loadMoreBooks() },
                     modifier = Modifier.padding(innerPadding)
                 )
             }

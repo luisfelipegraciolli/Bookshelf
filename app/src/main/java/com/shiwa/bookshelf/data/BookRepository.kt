@@ -12,15 +12,25 @@ import com.shiwa.bookshelf.network.ApiService
 
 
 interface BookRepository {
-    suspend fun getBooks(query: String): List<Book>
+    suspend fun getBooks(
+        query: String,
+        maxResults: Int = 20,
+        startIndex: Int = 0
+        ): List<Book>
     suspend fun getBook(id: String): Book
 }
 
 class BookRepositoryImpl(private val apiService: ApiService) : BookRepository {
-    override suspend fun getBooks(query: String): List<Book> {
+    override suspend fun getBooks(
+        query: String,
+        maxResults: Int,
+        startIndex: Int
+    ): List<Book> {
         val validQuery = query.ifEmpty { "jazz+history" }.replace(" ", "+")
         return apiService.getBooks(
             validQuery = validQuery,
+            maxResults = maxResults,
+            startIndex = startIndex,
             apiKey = BuildConfig.API_KEY
         ).books ?: emptyList()
     }
