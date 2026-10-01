@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,6 +43,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -148,7 +150,7 @@ fun BookSearchBar(
 fun BooksGridScreen(books: List<Book>, onLoadMore: () -> Unit, modifier: Modifier) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(150.dp),
-        contentPadding = PaddingValues(4.dp)
+        contentPadding = PaddingValues(8.dp)
     ) {
         items(books.size) { index ->
             if(index >= books.size - 2){
@@ -156,7 +158,10 @@ fun BooksGridScreen(books: List<Book>, onLoadMore: () -> Unit, modifier: Modifie
                     onLoadMore()
                 }
             }
-            BookCard(book = books[index], modifier = modifier.padding(6.dp).fillMaxWidth())
+            BookCard(book = books[index],
+                modifier = modifier
+                    .padding(6.dp)
+                    .fillMaxWidth())
         }
     }
 }
@@ -175,11 +180,15 @@ fun BookCard(book: Book, modifier: Modifier = Modifier) {
                 placeholder = null,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(0.7f)
             )
             Text(
                 text = "${book.volumeInfo.title}",
                 textAlign = TextAlign.Start,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = modifier.padding(2.dp)
             )
