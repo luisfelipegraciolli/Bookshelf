@@ -75,7 +75,7 @@ class HomeViewModel(private val bookRepository: BookRepository) : ViewModel() {
 
                 _uiState.update {
                     HomeUiState.Success(
-                        books = newBooks,
+                        books = currentState.books,
                         canLoadMore = newBooks.size >= 20,
                         isLoadingMore = false
                     )
