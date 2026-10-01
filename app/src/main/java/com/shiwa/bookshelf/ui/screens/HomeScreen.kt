@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -12,13 +13,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,13 +36,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.shiwa.bookshelf.model.Book
+import com.shiwa.bookshelf.model.ImageLinks
+import com.shiwa.bookshelf.model.VolumeInfo
 
 
 @Composable
@@ -46,7 +59,7 @@ fun HomeScreen(
 ) {
     when (uiState) {
         is HomeUiState.Loading -> LoadingScreen(modifier = modifier)
-        is HomeUiState.Success -> BookCard(book = uiState.books.getOrNull(0) ?: Book(), modifier = modifier)
+        is HomeUiState.Success -> BooksGridScreen(books = uiState.books, modifier = modifier)
         is HomeUiState.Error -> ErrorScreen(modifier = modifier)
     }
 }
@@ -127,25 +140,83 @@ fun BookSearchBar(
 
 @Composable
 fun BooksGridScreen(books: List<Book>, modifier: Modifier) {
-    TODO("Not yet implemented")
-
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(150.dp),
+        contentPadding = PaddingValues(4.dp)
+    ) {
+        items(books.size) { book ->
+            BookCard(book = books[book], modifier = modifier.padding(6.dp).fillMaxWidth())
+        }
+    }
 }
 
 @Composable
 fun BookCard(book: Book, modifier: Modifier = Modifier) {
-    Column(modifier = modifier.fillMaxSize()) {
-        Text(text = "${book.volumeInfo.imageLinks?.thumbnail}")
-        Spacer(modifier = Modifier.height(8.dp))
-        AsyncImage(
-            model = book.volumeInfo.imageLinks?.httpsThumbnail,
-            contentDescription = null,
-            placeholder = null,
-            error = null
-        )
-        val bookTitle = book.volumeInfo.title ?: ""
-        Text(text = bookTitle)
+    Card(modifier = modifier,
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)) {
+        Column(modifier = modifier) {
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current)
+                    .data(book.volumeInfo.imageLinks?.httpsThumbnail)
+                    .crossfade(true)
+                    .build(),
+                error = null,
+                placeholder = null,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxWidth()
+            )
+            Text(
+                text = "${book.volumeInfo.title}",
+                textAlign = TextAlign.Start,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = modifier.padding(2.dp)
+            )
+        }
     }
+}
 
+@Preview(showBackground = true)
+@Composable
+fun GridPreview(){
+    BooksGridScreen(
+        books = listOf(
+            Book(
+                volumeInfo = VolumeInfo(
+                    title = "Book Title",
+                    imageLinks = ImageLinks(
+                        thumbnail = "https://example.com/thumbnail.jpg"
+                    )
+                )
+            ),
+            Book(
+                volumeInfo = VolumeInfo(
+                    title = "Book Title",
+                    imageLinks = ImageLinks(
+                        thumbnail = "https://example.com/thumbnail.jpg"
+                    )
+                )
+            ),
+            Book(
+                volumeInfo = VolumeInfo(
+                    title = "Book Title",
+                    imageLinks = ImageLinks(
+                        thumbnail = "https://example.com/thumbnail.jpg"
+                    )
+                )
+            ),
+            Book(
+                volumeInfo = VolumeInfo(
+                    title = "Book Title",
+                    imageLinks = ImageLinks(
+                        thumbnail = "https://example.com/thumbnail.jpg"
+                    )
+                )
+            ),
+
+            ),
+        modifier = Modifier.fillMaxSize()
+    )
 }
 
 @Preview(showBackground = true)
