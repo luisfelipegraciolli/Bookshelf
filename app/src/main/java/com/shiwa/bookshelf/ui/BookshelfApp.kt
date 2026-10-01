@@ -15,25 +15,25 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.shiwa.bookshelf.ui.screens.HomeScreen
-import com.shiwa.bookshelf.ui.screens.HomeViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.shiwa.bookshelf.R
 import com.shiwa.bookshelf.ui.screens.BookSearchBar
+import com.shiwa.bookshelf.ui.screens.HomeScreen
+import com.shiwa.bookshelf.ui.screens.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookshelfApp(){
+fun BookshelfApp() {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
     Scaffold(
         topBar = { BookshelfTopAppBar(scrollBehavior = scrollBehavior, viewModel = viewModel) }
-    ){ innerPadding ->
+    ) { innerPadding ->
         Surface(modifier = Modifier.fillMaxSize()) {
 
             Column(
@@ -44,16 +44,21 @@ fun BookshelfApp(){
             ) {
                 HomeScreen(
                     uiState = viewModel.uiState.collectAsState().value,
-                    onLoadMore = { viewModel.loadMoreBooks() }
+                    onLoadMore = { viewModel.loadMoreBooks() },
+                    retryAction = { viewModel.getBooks() }
                 )
-            }
             }
         }
     }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookshelfTopAppBar(scrollBehavior: TopAppBarScrollBehavior, viewModel: HomeViewModel, modifier: Modifier = Modifier) {
+fun BookshelfTopAppBar(
+    scrollBehavior: TopAppBarScrollBehavior,
+    viewModel: HomeViewModel,
+    modifier: Modifier = Modifier
+) {
     CenterAlignedTopAppBar(
         scrollBehavior = scrollBehavior,
         title = {
@@ -65,6 +70,7 @@ fun BookshelfTopAppBar(scrollBehavior: TopAppBarScrollBehavior, viewModel: HomeV
                     text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.headlineSmall,
                 )
+                Spacer(modifier = Modifier.padding(4.dp))
                 BookSearchBar(
                     modifier = Modifier
                         .fillMaxWidth()

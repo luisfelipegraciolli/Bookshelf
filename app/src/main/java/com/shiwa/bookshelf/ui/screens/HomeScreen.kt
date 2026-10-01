@@ -2,6 +2,7 @@ package com.shiwa.bookshelf.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,6 +23,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -59,27 +61,63 @@ import com.shiwa.bookshelf.model.VolumeInfo
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onLoadMore: () -> Unit,
+    retryAction: () -> Unit = {},
     uiState: HomeUiState
 ) {
     when (uiState) {
-        is HomeUiState.Loading -> LoadingScreen(modifier = modifier)
+
         is HomeUiState.Success -> BooksGridScreen(
             books = uiState.books,
             modifier = modifier,
             onLoadMore = onLoadMore
         )
-        is HomeUiState.Error -> ErrorScreen(modifier = modifier)
+
+        is HomeUiState.Loading -> LoadingScreen(
+            modifier = modifier
+        )
+
+        is HomeUiState.Error -> ErrorScreen(
+            modifier = modifier,
+            retryAction = retryAction
+        )
     }
 }
 
 @Composable
-fun ErrorScreen(modifier: Modifier = Modifier) {
-    Text("Error!")
+fun ErrorScreen(retryAction: () -> Unit, modifier: Modifier = Modifier) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+    ) {
+        Text(
+            text = "Error :(",
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = modifier.fillMaxWidth(),
+        )
+        Spacer(modifier = Modifier.padding(16.dp))
+        Button(onClick = retryAction) {
+            Text(text = "Retry")
+        }
+    }
+
 }
 
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {
-    Text("Loading!")
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Loading!",
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = modifier,
+        )
+    }
+
 }
 
 @Composable
@@ -87,24 +125,24 @@ fun BookSearchBar(
     modifier: Modifier = Modifier,
     placeholder: String = "Search for a book",
     onSearch: (String) -> Unit
-)
-{
-    var query by remember{mutableStateOf("")}
+) {
+    var query by remember { mutableStateOf("") }
 
-    Row(verticalAlignment = Alignment.CenterVertically,
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
             .height(48.dp)
             .clip(RoundedCornerShape(16.dp))
             .background(Color(0xFF2A2A2A))
-    ){
+    ) {
         Box(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .weight(1.0f),
             contentAlignment = Alignment.CenterStart
 
-        ){
+        ) {
             BasicTextField(
                 value = query,
                 onValueChange = { query = it },
@@ -122,7 +160,7 @@ fun BookSearchBar(
                     innerTextField()
                 },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(onSearch = {onSearch(query)}),
+                keyboardActions = KeyboardActions(onSearch = { onSearch(query) }),
                 modifier = Modifier
                     .fillMaxWidth()
             )
@@ -135,7 +173,7 @@ fun BookSearchBar(
                 .background(Color(0xFF2A2A2A))
                 .clickable { onSearch(query) },
             contentAlignment = Alignment.Center
-        ){
+        ) {
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = "Pesquisar",
@@ -153,23 +191,27 @@ fun BooksGridScreen(books: List<Book>, onLoadMore: () -> Unit, modifier: Modifie
         contentPadding = PaddingValues(8.dp)
     ) {
         items(books.size) { index ->
-            if(index >= books.size - 2){
-                LaunchedEffect(index){
+            if (index >= books.size - 2) {
+                LaunchedEffect(index) {
                     onLoadMore()
                 }
             }
-            BookCard(book = books[index],
+            BookCard(
+                book = books[index],
                 modifier = modifier
                     .padding(6.dp)
-                    .fillMaxWidth())
+                    .fillMaxWidth()
+            )
         }
     }
 }
 
 @Composable
 fun BookCard(book: Book, modifier: Modifier = Modifier) {
-    Card(modifier = modifier,
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)) {
+    Card(
+        modifier = modifier,
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
         Column(modifier = modifier) {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
@@ -198,50 +240,8 @@ fun BookCard(book: Book, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun GridPreview(){
-    BooksGridScreen(
-        books = listOf(
-            Book(
-                volumeInfo = VolumeInfo(
-                    title = "Book Title",
-                    imageLinks = ImageLinks(
-                        thumbnail = "https://example.com/thumbnail.jpg"
-                    )
-                )
-            ),
-            Book(
-                volumeInfo = VolumeInfo(
-                    title = "Book Title",
-                    imageLinks = ImageLinks(
-                        thumbnail = "https://example.com/thumbnail.jpg"
-                    )
-                )
-            ),
-            Book(
-                volumeInfo = VolumeInfo(
-                    title = "Book Title",
-                    imageLinks = ImageLinks(
-                        thumbnail = "https://example.com/thumbnail.jpg"
-                    )
-                )
-            ),
-            Book(
-                volumeInfo = VolumeInfo(
-                    title = "Book Title",
-                    imageLinks = ImageLinks(
-                        thumbnail = "https://example.com/thumbnail.jpg"
-                    )
-                )
-            ),
+fun LoadingScreenPreview() {
+    LoadingScreen(
 
-            ),
-        onLoadMore = {},
-        modifier = Modifier.fillMaxSize()
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun BookSearchBarPreview() {
-    BookSearchBar(onSearch = {})
 }
